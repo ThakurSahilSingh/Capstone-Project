@@ -1,7 +1,3 @@
-Here is your updated `README.md` content, tailored to your GitHub repo:
-✅ Uses your repo link
-✅ Sets your name as the maintainer
-✅ Replaces `us-west-2` with `us-west-1` as the Disaster Recovery region
 
 ---
 
