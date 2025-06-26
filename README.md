@@ -46,9 +46,10 @@ This solution spans **two AWS regions**:
                 +--------------------+
                 |       EKS          |
                 +--------------------+
-![image](https://github.com/user-attachments/assets/7454dc65-198a-4101-b27f-298500f9b6b0)
+
 
 ````
+![image](https://github.com/user-attachments/assets/cc910349-144c-43f5-a745-38c80264bedd)
 
 * EKS services run in both regions.
 * RDS has cross-region replica or snapshot-based replication.
