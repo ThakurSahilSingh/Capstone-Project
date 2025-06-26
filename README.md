@@ -46,6 +46,8 @@ This solution spans **two AWS regions**:
                 +--------------------+
                 |       EKS          |
                 +--------------------+
+![image](https://github.com/user-attachments/assets/7454dc65-198a-4101-b27f-298500f9b6b0)
+
 ````
 
 * EKS services run in both regions.
