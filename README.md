@@ -226,8 +226,3 @@ This project is licensed under the [MIT License](LICENSE).
 For queries or collaboration, feel free to open an issue or submit a pull request.
 
 ```
-
----
-
-Let me know if you want this saved as a downloadable `.md` file or if you'd like to embed visual GitHub badges at the top.
-```
