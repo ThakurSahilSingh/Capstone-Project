@@ -1,7 +1,4 @@
 
----
-
-````markdown
 # 🌍 AWS Capstone Final Project: Multi-Region CI/CD-Driven Application with Disaster Recovery
 
 This repository delivers a production-ready, **multi-tier, multi-region web application** built with automation, high availability, and disaster recovery at its core. It combines modern CI/CD practices with a robust cloud-native architecture, deploying a **PHP frontend** and **Python/Flask backend** on **Amazon EKS**, with **Amazon RDS (MySQL)** powering persistent storage.
