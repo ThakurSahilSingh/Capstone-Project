@@ -1,4 +1,7 @@
-Here is the full `README.md` content in copy-pasteable Markdown format:
+Here is your updated `README.md` content, tailored to your GitHub repo:
+✅ Uses your repo link
+✅ Sets your name as the maintainer
+✅ Replaces `us-west-2` with `us-west-1` as the Disaster Recovery region
 
 ---
 
@@ -26,7 +29,7 @@ This repository delivers a production-ready, **multi-tier, multi-region web appl
 This solution spans **two AWS regions**:
 
 - **Primary Region:** `us-east-1`
-- **Disaster Recovery Region:** `us-west-2`
+- **Disaster Recovery Region:** `us-west-1`
 
 ```text
                 +--------------------+
@@ -67,7 +70,7 @@ This solution spans **two AWS regions**:
 ### 🌐 Multi-Region Disaster Recovery
 
 * **Primary Active Region:** `us-east-1`
-* **Passive DR Region:** `us-west-2` with pre-provisioned standby infra.
+* **Passive DR Region:** `us-west-1` with pre-provisioned standby infra.
 * **Failover Logic:**
 
   * Health checks via Route 53.
@@ -159,11 +162,11 @@ This solution spans **two AWS regions**:
 ### 📦 Clone the Repository
 
 ```bash
-git clone https://github.com/PavanThumati/AWS_CapStone_Final_Project.git
-cd AWS_CapStone_Final_Project
+git clone https://github.com/ThakurSahilSingh/Capstone-Project.git
+cd Capstone-Project
 ```
 
-### 🌍 Deploy Primary Region (us-east-1)
+### 🌍 Deploy Primary Region (`us-east-1`)
 
 * Create VPC, subnets, gateways via IaC
 * Deploy EKS cluster & node groups
@@ -171,7 +174,7 @@ cd AWS_CapStone_Final_Project
 * Set up CodePipeline & CodeBuild (linked to GitHub)
 * Configure ECR, IAM, and Kubernetes manifests
 
-### 🆘 Deploy Disaster Recovery Region (us-west-2)
+### 🆘 Deploy Disaster Recovery Region (`us-west-1`)
 
 ```bash
 cd terraform/dr-region
@@ -193,7 +196,7 @@ terraform apply
 ## 📁 Project Structure
 
 ```text
-AWS_CapStone_Final_Project/
+Capstone-Project/
 ├── terraform/
 │   └── dr-region/     # Terraform configs for DR region
 ├── manifests/         # Kubernetes deployment files
@@ -223,8 +226,12 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## 📬 Contact
 
-**Maintainer:** [Pavan Thumati](https://github.com/PavanThumati)
+**Maintainer:** [Thakur Sahil Singh](https://github.com/ThakurSahilSingh)
 For queries or collaboration, feel free to open an issue or submit a pull request.
 
 ```
 
+---
+
+Let me know if you want this saved as a downloadable `.md` file or if you'd like to embed visual GitHub badges at the top.
+```
