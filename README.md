@@ -14,7 +14,8 @@ This repository delivers a production-ready, **multi-tier, multi-region web appl
 - **Backend:** Flask (Python) microservice also on EKS.
 - **Database:** Amazon RDS (MySQL, Multi-AZ) for high availability.
 - **CI/CD:** Full automation with AWS CodePipeline and CodeBuild.
-- **Security:** Image scanning (Trivy), static code analysis (SonarQube).
+- **Security:** Trivy for container scanning, SonarQube for static analysis.
+- **Monitoring:** Centralized logs and alerts with Amazon CloudWatch.
 - **Multi-Region DR:** Active-Passive setup using Route 53 failover.
 - **IaC:** Infrastructure managed using CloudFormation and Terraform.
 
@@ -46,14 +47,11 @@ This solution spans **two AWS regions**:
                 +--------------------+
                 |       EKS          |
                 +--------------------+
-
-
 ````
-![image](https://github.com/user-attachments/assets/cc910349-144c-43f5-a745-38c80264bedd)
 
 * EKS services run in both regions.
-* RDS has cross-region replica or snapshot-based replication.
-* Route 53 handles failover with health checks.
+* RDS uses cross-region snapshot or replication.
+* Route 53 manages traffic routing and failover with health checks.
 
 ---
 
@@ -62,35 +60,54 @@ This solution spans **two AWS regions**:
 ### ✅ CI/CD Automation
 
 * **Trigger:** GitHub pushes via CodeStar Connections.
-* **Build:** Dockerize apps, run SonarQube & Trivy scans.
+* **Build:** Dockerize apps, run static and security scans.
 * **Deploy:** Apply Kubernetes manifests to EKS.
 * **Artifacts:** Store images in Amazon ECR.
 
-### 🌐 Multi-Region Disaster Recovery
+### 🔍 SonarQube Integration
 
-* **Primary Active Region:** `us-east-1`
-* **Passive DR Region:** `us-west-1` with pre-provisioned standby infra.
-* **Failover Logic:**
+* Performs **static code analysis** for PHP and Python code.
+* Ensures code quality, detects bugs, and flags vulnerabilities.
+* Integrated in the CodeBuild phase of CI/CD.
 
-  * Health checks via Route 53.
-  * Route 53 re-routes DNS traffic upon failure detection.
-  * RDS replica in DR is promoted, EKS is activated.
+### 🛡️ Trivy Image Scanning
+
+* Scans Docker images during the build phase.
+* Detects vulnerabilities (CVEs) in system packages and libraries.
+* Critical vulnerabilities can stop the deployment pipeline.
+
+### 🌐 Route 53 Failover Routing
+
+* Configured with **failover routing policies**.
+* Monitors health of endpoints in both regions.
+* Automatically redirects traffic to `us-west-1` if `us-east-1` becomes unhealthy.
+* Provides near-zero downtime disaster recovery.
+
+### 📊 Amazon CloudWatch Monitoring
+
+* Collects logs from EKS, CodeBuild, RDS, and VPC.
+* Dashboards show CPU, memory, error rates.
+* **CloudWatch Alarms** trigger alerts via SNS (email, Slack, etc.)
+
+  * EKS Node CPU > 75%
+  * RDS CPU/memory utilization
+  * App latency/error spikes
 
 ---
 
 ## 🔧 AWS Services Used
 
-| Category   | Services                                            |
-| ---------- | --------------------------------------------------- |
-| Networking | VPC, Subnets, IGW, NAT Gateway                      |
-| Compute    | Amazon EKS, EC2 for worker nodes                    |
-| Containers | Amazon ECR                                          |
-| Database   | Amazon RDS for MySQL (Multi-AZ, Cross-Region DR)    |
-| CI/CD      | CodePipeline, CodeBuild, CodeStar Connections       |
-| Monitoring | Amazon CloudWatch (Logs, Alarms), Amazon SNS        |
-| DNS & DR   | Amazon Route 53 (Health checks, Failover Routing)   |
-| Security   | IAM (Least Privilege), SGs, NACLs, Trivy, SonarQube |
-| IaC        | CloudFormation (Primary), Terraform (DR Region)     |
+| Category   | Services                                          |
+| ---------- | ------------------------------------------------- |
+| Networking | VPC, Subnets, IGW, NAT Gateway                    |
+| Compute    | Amazon EKS, EC2 for worker nodes                  |
+| Containers | Amazon ECR                                        |
+| Database   | Amazon RDS for MySQL (Multi-AZ, Cross-Region DR)  |
+| CI/CD      | CodePipeline, CodeBuild, CodeStar Connections     |
+| Monitoring | Amazon CloudWatch (Logs, Alarms), Amazon SNS      |
+| DNS & DR   | Amazon Route 53 (Health checks, Failover Routing) |
+| Security   | IAM, Security Groups, Trivy, SonarQube            |
+| IaC        | CloudFormation (Primary), Terraform (DR Region)   |
 
 ---
 
@@ -101,62 +118,39 @@ This solution spans **two AWS regions**:
 
 2. **Build (CodeBuild)**
 
-   * Run SonarQube static analysis
-   * Build Docker images
-   * Run Trivy security scan
+   * SonarQube static code analysis
+   * Trivy container image scanning
+   * Docker image build and artifact creation
 
 3. **Push (ECR)**
 
-   * Push validated images to ECR
+   * Push validated images to Amazon ECR
 
 4. **Deploy (EKS)**
 
    * Apply Kubernetes manifests
-   * Perform rolling updates
+   * Use rolling updates for zero-downtime deployment
 
 ---
 
 ## 🛡️ Disaster Recovery Strategy
 
 * **Active-Passive Design**
-* **RDS:** MySQL replication or snapshot-based failover
-* **EKS:** Standby infra is pre-provisioned
-* **Route 53:**
-
-  * Health checks on ALB/NLB
-  * Auto-switch traffic to DR region
-
----
-
-## 📈 Monitoring & Alerting
-
-* **CloudWatch Logs**: App logs, VPC flow, load balancer access.
-* **CloudWatch Alarms**:
-
-  * EKS Node CPU > 75%
-  * App error spikes
-  * RDS connection/CPU alerts
-* **Amazon SNS**: Sends alerts via email/Slack/other integrations.
+* **Primary Region:** `us-east-1` handles live traffic
+* **Disaster Region:** `us-west-1` mirrors infra, ready to take over
+* **RDS:** Cross-region read replica or snapshot restore
+* **EKS:** Pre-provisioned cluster ready to scale
+* **Route 53:** Failover DNS routing via health checks
 
 ---
 
-## 🔐 Security Highlights
-
-* IAM roles scoped with **least privilege**
-* Private subnets for app and DB
-* Trivy scans for containers during build
-* SonarQube detects code-level vulnerabilities
-* Network ACLs and SGs tightly controlled
-
----
-
-## ⚙️ Setup Instructions (High-Level)
+## ⚙️ Setup Instructions
 
 ### 🔧 Prerequisites
 
 * AWS account & CLI configured
-* Docker & Terraform installed
-* `kubectl` configured for EKS
+* Docker, Terraform, and `kubectl` installed
+* GitHub CodeStar Connection created
 
 ### 📦 Clone the Repository
 
@@ -167,11 +161,9 @@ cd Capstone-Project
 
 ### 🌍 Deploy Primary Region (`us-east-1`)
 
-* Create VPC, subnets, gateways via IaC
-* Deploy EKS cluster & node groups
-* Launch RDS (MySQL Multi-AZ)
-* Set up CodePipeline & CodeBuild (linked to GitHub)
-* Configure ECR, IAM, and Kubernetes manifests
+* Provision VPC, subnets, NAT/IGW
+* Deploy EKS and RDS
+* Configure IAM, CodePipeline, CodeBuild, ECR
 
 ### 🆘 Deploy Disaster Recovery Region (`us-west-1`)
 
@@ -181,14 +173,13 @@ terraform init
 terraform apply
 ```
 
-* Creates mirrored VPC, EKS, RDS (replica)
-* Optional: mirrored CI/CD for DR drills
+* Sets up mirrored infrastructure in DR region
 
 ### 🧭 Configure Route 53
 
-* Hosted zone with failover routing policy
-* Health checks for regional endpoints
-* DNS automatically fails over to DR
+* Setup health checks for load balancers in both regions
+* Configure failover routing policy
+* Test DNS switch during simulated failure
 
 ---
 
@@ -200,7 +191,7 @@ Capstone-Project/
 │   └── dr-region/     # Terraform configs for DR region
 ├── manifests/         # Kubernetes deployment files
 ├── buildspec.yaml     # CodeBuild instructions
-├── scripts/           # Utility scripts for setup/monitoring
+├── scripts/           # Utility scripts
 ├── sonar-project.properties  # SonarQube config
 └── README.md
 ```
@@ -226,6 +217,7 @@ This project is licensed under the [MIT License](LICENSE).
 ## 📬 Contact
 
 **Maintainer:** [Thakur Sahil Singh](https://github.com/ThakurSahilSingh)
-For queries or collaboration, feel free to open an issue or submit a pull request.
+For any issues, suggestions, or improvements—feel free to raise an issue or submit a PR.
 
 ```
+
