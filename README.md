@@ -187,13 +187,29 @@ terraform apply
 
 ```text
 Capstone-Project/
-├── terraform/
-│   └── dr-region/     # Terraform configs for DR region
-├── manifests/         # Kubernetes deployment files
-├── buildspec.yaml     # CodeBuild instructions
-├── scripts/           # Utility scripts
-├── sonar-project.properties  # SonarQube config
-└── README.md
+├── Application-Code/
+│   ├── app-tier/                             # Backend service built with Flask
+│   │   ├── Dockerfile                        # Dockerfile to containerize the Flask app
+│   │   ├── app.py                            # Main Flask application code
+│   │   └── config.py                         # Configuration settings for the Flask app
+│   └── web-tier/                             # Frontend service built with PHP
+│       ├── Dockerfile                        # Dockerfile to containerize the PHP app
+│       └── index.php                         # Entry point for the PHP web application
+├── CF-buildspec.yml                          # Buildspec used in the build stage by CloudFormation-created pipeline
+├── IAC/
+│   ├── cloudformation/
+│   │   └── infra.yaml                        # CloudFormation template to provision full infrastructure stack
+│   └── terraform/
+│       └── dr-region/                        # Terraform configuration for Disaster Recovery region
+│           ├── main.tf                       # Terraform script defining AWS infrastructure resources
+│           └── variable.tf                   # Defines input variables for the Terraform module
+├── README.md                                 # Main documentation file describing the project
+├── TF-Pipeline1-buildspec.yml                # Buildspec that is used for main Terraform pipeline
+├── TF-Pipeline2-buildspec.yml                # Buildspec used in the build stage by automated pipeline created using Terraform
+├── TF-Pipeline2-buildspec-deploy.yml         # Buildspec used in the deploy stage by automated pipeline created using Terraform
+└── k8s/                                       # Kubernetes manifests directory
+    ├── flask-deployment.yaml                 # Kubernetes deployment config for the Flask backend
+    └── php-deployment.yaml                   # Kubernetes deployment config for the PHP frontend
 ```
 
 ---
